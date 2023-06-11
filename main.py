@@ -52,25 +52,29 @@ def forward_select(data):
     print("Finished Search! The best feature subset is:", current_features, "which has an accuracy of:",best_so_far_accuracy)
 
 def backward_elim(data):
-    current_features = []
-    best_features = []
-    for i in range(data):
-        print("On the", i+1,"th level of the search tree")
-        feature_to_add = []
-        best_so_far_accuracy = 0
-
-        for k in range(1,data+1):
-            if k not in current_features:
-                #acc = accuracy()
-                acc = int(accuracy()*100)
-                print("--Considering adding the", k, "feature, accuracy is:", acc)
-                if acc > best_so_far_accuracy:
-                    best_so_far_accuracy = acc
-                    feature_to_add = k
-            
-        
-        current_features.append(feature_to_add)
-        print("On level", i+1, "i added feature", feature_to_add, "to current set ", current_features, ", accuracy is:", best_so_far_accuracy)
+    current_features = list(range(1,data+1))
+    best_so_far_accuracy = int(accuracy()*100)
+    flag = False
+    print("Beginning search.\n")
+    print("Feature set ", current_features, " has accuracy:", best_so_far_accuracy, "\n")
+    while (1): 
+        feature_to_remove = None
+        for k in current_features[:]:
+            current_features.remove(k)
+            acc = int(accuracy()*100)
+            print("\tRemoving feature ",k," leaves us with feature set ", current_features, " accuracy is: ", acc, sep='')
+            current_features.append(k)
+            if acc > best_so_far_accuracy:
+                best_so_far_accuracy = acc
+                feature_to_remove = k
+                flag = True
+        if flag:
+            current_features.remove(feature_to_remove)
+            flag = False
+        else:
+            break
+        print("\nFeature set ", current_features, " was best, accuracy is:", best_so_far_accuracy, "\n")
+    print("\nFinished Search! The best feature subset is:", current_features, "which has an accuracy of:", best_so_far_accuracy)
 
 
 #cv = LeaveOneOut()
