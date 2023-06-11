@@ -19,6 +19,15 @@ def leave_one_out_cross_validation(data, current_features, k):
     pass
 
 def feature_search_demo(data):
+    choice = int(input("Choose number of the algorithm you want to run. \n 1. Forward Selection \n 2. Backward Elimination \n"))
+    if (choice == 1):
+        print("Forward Selection")
+        forward_select(data)
+    elif (choice == 2):
+        print("Backward Elimination")
+        backward_elim(data)
+    
+def forward_select(data):
     current_features = []
 
     for i in range(data):
@@ -37,7 +46,26 @@ def feature_search_demo(data):
         
         current_features.append(feature_to_add)
         print("On level", i+1, "i added feature", feature_to_add, "to current set")
-    
+
+def backward_elim(data):
+    current_features = []
+
+    for i in range(data):
+        print("On the", i+1,"th level of the search tree")
+        feature_to_add = []
+        best_so_far_accuracy = 0
+
+        for k in range(data):
+            if k not in current_features:
+                print("--Considering adding the", k+1, "feature")
+                acc = accuracy()
+
+                if acc > best_so_far_accuracy:
+                    best_so_far_accuracy = acc
+                    feature_to_add = k
+        
+        current_features.append(feature_to_add)
+        print("On level", i+1, "i added feature", feature_to_add, "to current set")
 
 
 cv = LeaveOneOut()
