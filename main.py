@@ -29,48 +29,53 @@ def feature_search_demo(data):
     
 def forward_select(data):
     current_features = []
-
+    best_so_far_accuracy = 0
+    flag = False
+    print("Beginning search.\n")
     for i in range(data):
-        print("On the", i+1,"th level of the search tree")
         feature_to_add = []
-        best_so_far_accuracy = 0
-
-        for k in range(data):
+        for k in range(1,data+1):
             if k not in current_features:
-                print("--Considering adding the", k+1, "feature")
-                acc = accuracy()
-
+                #acc = accuracy()
+                current_features.append(k)
+                acc = int(accuracy()*100)
+                print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
+                current_features.pop(-1)  
                 if acc > best_so_far_accuracy:
                     best_so_far_accuracy = acc
                     feature_to_add = k
-        
-        current_features.append(feature_to_add)
-        print("On level", i+1, "i added feature", feature_to_add, "to current set")
+                    flag = True
+        if(flag):
+            current_features.append(feature_to_add)
+        flag = False
+        print("\nFeature set ", current_features, " was best, accuracy is:", best_so_far_accuracy,"\n")
+    print("Finished Search! The best feature subset is:", current_features, "which has an accuracy of:",best_so_far_accuracy)
 
 def backward_elim(data):
     current_features = []
-
+    best_features = []
     for i in range(data):
         print("On the", i+1,"th level of the search tree")
         feature_to_add = []
         best_so_far_accuracy = 0
 
-        for k in range(data):
+        for k in range(1,data+1):
             if k not in current_features:
-                print("--Considering adding the", k+1, "feature")
-                acc = accuracy()
-
+                #acc = accuracy()
+                acc = int(accuracy()*100)
+                print("--Considering adding the", k, "feature, accuracy is:", acc)
                 if acc > best_so_far_accuracy:
                     best_so_far_accuracy = acc
                     feature_to_add = k
+            
         
         current_features.append(feature_to_add)
-        print("On level", i+1, "i added feature", feature_to_add, "to current set")
+        print("On level", i+1, "i added feature", feature_to_add, "to current set ", current_features, ", accuracy is:", best_so_far_accuracy)
 
 
-cv = LeaveOneOut()
-model = LinearRegression()
-scores = cross_val_score
+#cv = LeaveOneOut()
+#model = LinearRegression()
+#scores = cross_val_score
 #need to find out how to read the file
 #df = pd.read_csv("small-test-dataset.txt", )
 
