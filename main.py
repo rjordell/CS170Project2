@@ -13,14 +13,69 @@ from collections import Counter
 
 def accuracy():
     #part 2:
-    #acc = leave_one_out_cross_validation()
-    acc = random.random()
+    cnt = 0
+    
+    for i,j in zip(predictedClasses, classData):
+        if i == j:
+            cnt += 1
+            
+    acc = (cnt/len(classData)) * 100
     return acc
 
 def leave_one_out_cross_validation(file):
-    acc = random.random()
+    projection = []
+    classes = [entry[0] for entry in file]
+    
+    for index in range(len(file)):
+        dataEval = file[index]
+        dataEval = dataEval[1:]
+        trainingData = []
+        
+        if index == 0:
+            trainingData = file[1:]
+            
+        elif index == (len(file)-1):
+            trainingData = file[:index]
+            
+        else:
+            trainingData = np.concatenate((file[:index],file[index+1:]), axis=0)
+            
+        trainingClass = [i[0] for i in trainingData]
+        trainingData = np.delete(trainingData, 0, axis=1)
+        projectedClass = nearest_neighbor_classifier(dataEval, trainingData, trainingClass, 2)
+        projection.append(projectedClass)
+    
+    acc = accuracy(projection, classes)
     return acc
-    pass
+
+"Euclidean distance between two vectors function implementation"
+def euclidean_distance(x, y, p):
+    squared_distance = np.sum(np.power(np.abs(x - y), p))
+    distance = np.power(squared_distance, 1/p)
+    return distance
+
+"K nearest neighbor function implementation (gets nn for one tuple)"
+def k_nearest_neighbors(trainingData, instance, trainingClass, p):
+    k = 1
+    totalDistances = []
+    count = 0
+    
+    for entry in trainingData:
+        generatedDistance = euclidean_distance(entry, instance, p)
+        totalDistances.append((generatedDistance, trainingClass[count]))
+        count += 1
+        
+    totalDistances = sorted(totalDistances, key=itemgetter(0))
+    k_neighbors = [val[1] for val in totalDistances[:k]]
+    return k_neighbors
+
+"Nearest neighbor classifier function implementation"
+def nearest_neighbor_classifier(instance, trainingData, trainingClass, p):
+    predictedClasses = []
+    neighbors = k_nearest_neighbors(trainingData, instance, trainingClass, p)
+    most_common_class = Counter(neighbors).most_common(1)[0][0]
+    predictedClasses.append(most_common_class)
+    return predictedClasses
 
 def feature_search_demo():
     input_file = input("Please type in the name of the file to test: ")
@@ -96,12 +151,5 @@ def backward_elim(file):
             break
         print("\nFeature set ", current_features, " was best, accuracy is:", best_so_far_accuracy, "\n")
     print("\nFinished Search! The best feature subset is:", current_features, "which has an accuracy of:", best_so_far_accuracy)
-
-
-#cv = LeaveOneOut()
-#model = LinearRegression()
-#scores = cross_val_score
-#need to find out how to read the file
-#df = pd.read_csv("small-test-dataset.txt", )
 
 feature_search_demo()
