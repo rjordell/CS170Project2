@@ -11,7 +11,7 @@ import numpy as np
 from collections import Counter
 
 
-def accuracy():
+def accuracy(predictedClasses, classData):
     #part 2:
     cnt = 0
     
