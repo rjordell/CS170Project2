@@ -137,33 +137,35 @@ def backward_elim(file):
     bestGlobalAcc = 0
 
     print("Beginning search.\n")
-
-    for i in range(1, numOfFeats):
+    for i in range(1,numOfFeats):
         bestLocalAcc = 0
         feature_to_add = []
-        for k in range(1,numOfFeats):
-            if k not in current_features:
-                testFeats = [n for n in current_features if n != k]
-                acc = leave_one_out_cross_validation(file[:, testFeats])
-                #print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
-                print("\tUsing feature(s) {feats} accuracy is {accuracy}%".format(feats=current_features + [k], accuracy=acc))
 
-                if acc > bestLocalAcc:
-                    bestLocalAcc = acc
-                    feature_to_add = k
-                 
-        if(feature_to_add):
+        for k in range(1, numOfFeats):
+            
+            if k not in current_features:
+                continue
+            
+            test_features = [n for n in current_features if n != k]
+            acc = leave_one_out_cross_validation(file[:,[0]+test_features])
+            print("\tUsing feature(s) {features} accuracy is {accuracy}%".format(features=test_features, accuracy=acc))
+
+            if acc > bestLocalAcc:
+                bestLocalAcc = acc
+                feature_to_add = k
+
+        if feature_to_add:
             current_features = [n for n in current_features if n != feature_to_add]
-        
+            
             if bestLocalAcc > bestGlobalAcc:
                 bestGlobalAcc = bestLocalAcc
                 best_feats[:] = current_features
-                print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n")
+                print("\nFeature set {} was best, accuracy is {}\n".format(current_features, bestLocalAcc))
                 
             else:
                 print("(Warning, Accuracy has decreased! Continuing search in case of local maxima)")
-                print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n") 
-
-    print("Finished Search! The best feature subset is:", best_feats, "which has an accuracy of:",bestGlobalAcc)
+                print("\nFeature set {} was best, accuracy is {}\n".format(current_features, bestLocalAcc))
+                
+    print("Finished search! The best feature subset is {} which has an accuracy of {}".format(best_feats, bestGlobalAcc))
 
 feature_search_demo()
