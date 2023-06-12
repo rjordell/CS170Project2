@@ -18,6 +18,8 @@ def accuracy():
     return acc
 
 def leave_one_out_cross_validation(file):
+    acc = random.random()
+    return acc
     pass
 
 def feature_search_demo():
@@ -42,7 +44,7 @@ def forward_select(file):
     bestGlobalAcc = 0
 
     print("Beginning search.\n")
-    for i in range(file):
+    for i in range(numOfFeats):
         bestLocalAcc = 0
         feature_to_add = []
         for k in range(1,numOfFeats):
@@ -61,7 +63,7 @@ def forward_select(file):
         
             if bestLocalAcc > bestGlobalAcc:
                 bestGlobalAcc = bestLocalAcc
-                bestFeats[:] = current_features
+                best_feats[:] = current_features
                 print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n")
                 
             else:
