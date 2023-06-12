@@ -20,7 +20,8 @@ def accuracy():
 def leave_one_out_cross_validation(file):
     pass
 
-def feature_search_demo(data):
+def feature_search_demo():
+    input_file = input("Please type in the name of the file to test: ")
     input_file_path = os.path.join(os.getcwd(), input_file)
     file = np.genfromtxt(input_file_path)
     choice = int(input("Choose number of the algorithm you want to run. \n 1. Forward Selection \n 2. Backward Elimination \n"))
@@ -101,4 +102,4 @@ def backward_elim(file):
 #need to find out how to read the file
 #df = pd.read_csv("small-test-dataset.txt", )
 
-feature_search_demo(string(input("Please type in the name of the file to test: ")))
+feature_search_demo()
