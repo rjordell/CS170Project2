@@ -128,28 +128,38 @@ def forward_select(file):
     print("Finished Search! The best feature subset is:", best_feats, "which has an accuracy of:",bestGlobalAcc)
 
 def backward_elim(file):
-    current_features = list(range(1,data+1))
-    best_so_far_accuracy = int(accuracy()*100)
-    flag = False
+    numOfFeats = file.shape[1]
+    current_features = list(range(1,numOfFeats))
+    best_feats = list(range(1,numOfFeats))
+    bestGlobalAcc = 0
+
     print("Beginning search.\n")
-    print("Feature set ", current_features, " has accuracy:", best_so_far_accuracy, "\n")
-    while (1): 
-        feature_to_remove = None
-        for k in current_features[:]:
-            current_features.remove(k)
-            acc = int(accuracy()*100)
-            print("\tRemoving feature ",k," leaves us with feature set ", current_features, " accuracy is: ", acc, sep='')
-            current_features.append(k)
-            if acc > best_so_far_accuracy:
-                best_so_far_accuracy = acc
-                feature_to_remove = k
-                flag = True
-        if flag:
-            current_features.remove(feature_to_remove)
-            flag = False
-        else:
-            break
-        print("\nFeature set ", current_features, " was best, accuracy is:", best_so_far_accuracy, "\n")
-    print("\nFinished Search! The best feature subset is:", current_features, "which has an accuracy of:", best_so_far_accuracy)
+
+    for i in range(numOfFeats):
+        bestLocalAcc = 0
+        feature_to_add = []
+        for k in range(1,numOfFeats):
+            if k not in current_features:
+                testFeats = [n for n in current_features if n != k]
+                acc = leave_one_out_cross_validation(file[:, testFeats])
+                print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
+
+                if acc > bestLocalAcc:
+                    bestLocalAcc = acc
+                    feature_to_add = k
+                 
+        if(feature_to_add):
+            current_features = [n for n in current_features if n != feature_to_add]
+        
+            if bestLocalAcc > bestGlobalAcc:
+                bestGlobalAcc = bestLocalAcc
+                best_feats[:] = current_features
+                print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n")
+                
+            else:
+                print("(Warning, Accuracy has decreased! Continuing search in case of local maxima)")
+                print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n") 
+
+    print("Finished Search! The best feature subset is:", best_feats, "which has an accuracy of:",bestGlobalAcc)
 
 feature_search_demo()
