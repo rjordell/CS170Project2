@@ -3,10 +3,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import LeaveOneOut
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LinearRegression
-from numpy import mean
-from numpy import absolute
-from numpy import sqrt
 import pandas as pd
+import time
+import os
+from operator import itemgetter
+import numpy as np
+from collections import Counter
 
 
 def accuracy():
@@ -19,15 +21,20 @@ def leave_one_out_cross_validation(data, current_features, k):
     pass
 
 def feature_search_demo(data):
+    input_file_path = os.path.join(os.getcwd(), input_file)
+    file = np.genfromtxt(input_file_path)
     choice = int(input("Choose number of the algorithm you want to run. \n 1. Forward Selection \n 2. Backward Elimination \n"))
+    start = time.time()
     if (choice == 1):
         print("Forward Selection")
-        forward_select(data)
+        forward_select(file)
     elif (choice == 2):
         print("Backward Elimination")
-        backward_elim(data)
+        backward_elim(file)
+    end = time.time()
+    print("Time to finish: {}".format(end-start))
     
-def forward_select(data):
+def forward_select(file):
     current_features = []
     best_so_far_accuracy = 0
     flag = False
@@ -51,7 +58,7 @@ def forward_select(data):
         print("\nFeature set ", current_features, " was best, accuracy is:", best_so_far_accuracy,"\n")
     print("Finished Search! The best feature subset is:", current_features, "which has an accuracy of:",best_so_far_accuracy)
 
-def backward_elim(data):
+def backward_elim(file):
     current_features = list(range(1,data+1))
     best_so_far_accuracy = int(accuracy()*100)
     flag = False
@@ -83,4 +90,4 @@ def backward_elim(data):
 #need to find out how to read the file
 #df = pd.read_csv("small-test-dataset.txt", )
 
-feature_search_demo(int(input("enter total number of features: ")))
+feature_search_demo(string(input("Please type in the name of the file to test: ")))
