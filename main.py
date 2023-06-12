@@ -135,7 +135,7 @@ def backward_elim(file):
 
     print("Beginning search.\n")
 
-    for i in range(numOfFeats):
+    for i in range(1, numOfFeats):
         bestLocalAcc = 0
         feature_to_add = []
         for k in range(1,numOfFeats):
