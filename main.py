@@ -103,15 +103,18 @@ def forward_select(file):
         bestLocalAcc = 0
         feature_to_add = []
         for k in range(1,numOfFeats):
-            if k not in current_features:
+            if k in current_features:
                 #acc = accuracy()
-                testFeats = [0] + current_features + [k]
-                acc = leave_one_out_cross_validation(file[:, testFeats])
-                print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
+                continue
+
+            testFeats = [0] + current_features + [k]
+            acc = leave_one_out_cross_validation(file[:, testFeats])
+            #print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
+            print("\tUsing feature(s) {feats} accuracy is {accuracy}%".format(feats=current_features + [k], accuracy=acc))
                  
-                if acc > bestLocalAcc:
-                    bestLocalAcc = acc
-                    feature_to_add = k
+            if acc > bestLocalAcc:
+                bestLocalAcc = acc
+                feature_to_add = k
         
         if(feature_to_add):
             current_features.append(feature_to_add)
@@ -142,7 +145,8 @@ def backward_elim(file):
             if k not in current_features:
                 testFeats = [n for n in current_features if n != k]
                 acc = leave_one_out_cross_validation(file[:, testFeats])
-                print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
+                #print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
+                print("\tUsing feature(s) {feats} accuracy is {accuracy}%".format(feats=current_features + [k], accuracy=acc))
 
                 if acc > bestLocalAcc:
                     bestLocalAcc = acc
