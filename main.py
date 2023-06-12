@@ -17,7 +17,7 @@ def accuracy():
     acc = random.random()
     return acc
 
-def leave_one_out_cross_validation(data, current_features, k):
+def leave_one_out_cross_validation(file):
     pass
 
 def feature_search_demo(data):
@@ -35,28 +35,39 @@ def feature_search_demo(data):
     print("Time to finish: {}".format(end-start))
     
 def forward_select(file):
+    numOfFeats = file.shape[1]
     current_features = []
-    best_so_far_accuracy = 0
-    flag = False
+    best_feats = []
+    bestGlobalAcc = 0
+
     print("Beginning search.\n")
-    for i in range(data):
+    for i in range(file):
+        bestLocalAcc = 0
         feature_to_add = []
-        for k in range(1,data+1):
+        for k in range(1,numOfFeats):
             if k not in current_features:
                 #acc = accuracy()
-                current_features.append(k)
-                acc = int(accuracy()*100)
+                testFeats = [0] + current_features + [k]
+                acc = leave_one_out_cross_validation(file[:, testFeats])
                 print("\tUsing feature(s) ",current_features," accuracy is: ",acc, sep='')
-                current_features.pop(-1)  
-                if acc > best_so_far_accuracy:
-                    best_so_far_accuracy = acc
+                 
+                if acc > bestLocalAcc:
+                    bestLocalAcc = acc
                     feature_to_add = k
-                    flag = True
-        if(flag):
+        
+        if(feature_to_add):
             current_features.append(feature_to_add)
-        flag = False
-        print("\nFeature set ", current_features, " was best, accuracy is:", best_so_far_accuracy,"\n")
-    print("Finished Search! The best feature subset is:", current_features, "which has an accuracy of:",best_so_far_accuracy)
+        
+            if bestLocalAcc > bestGlobalAcc:
+                bestGlobalAcc = bestLocalAcc
+                bestFeats[:] = current_features
+                print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n")
+                
+            else:
+                print("(Warning, Accuracy has decreased! Continuing search in case of local maxima)")
+                print("\nFeature set ", current_features, " was best, accuracy is:", bestLocalAcc,"\n")
+
+    print("Finished Search! The best feature subset is:", best_feats, "which has an accuracy of:",bestGlobalAcc)
 
 def backward_elim(file):
     current_features = list(range(1,data+1))
